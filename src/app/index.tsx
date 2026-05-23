@@ -1,98 +1,228 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
+export default function App() {
+  const [posts, setPosts] = useState([
+    {
+      id: 1, name: 'Wajid Hussain', role: 'Software Engineer at Digital Pine',
+      text: 'Just shipped my first React Native app! 🚀', likes: 12, liked: false
+    },
+    {
+      id: 2, name: 'M Ameen', role: 'Product Manager at Digital Pine',
+      text: 'Looking for a UI/UX designer for our startup. DM me if interested.', likes: 34, liked: true
+    },
+    {
+      id: 3, name: 'Sara Khan', role: 'Data Analyst at Amazon',
+      text: 'Completed my 100 days of coding challenge. Consistency is key!', likes: 56, liked: false
+    },
+  ]);;
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+ 
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+  const toggleLike = (id:number) => {
+    setPosts(posts.map(post =>
+      post.id === id
+       ? {...post, liked:!post.liked, likes: post.liked? post.likes - 1 : post.likes + 1 }
+        : post
+    ));
+  };
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>LinkedIn</Text>
+      </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+      <ScrollView>
+        {/* Profile Card */}
+        <View style={styles.profileCard}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>JD</Text>
+          </View>
+          <Text style={styles.profileName}>Tufail Abbas</Text>
+          <Text style={styles.profileRole}>React Native + Mern Stack Developer</Text>
+          <Text style={styles.profileStats}>500+ connections</Text>
+        </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+        {/* Feed Title */}
+        <Text style={styles.sectionTitle}>Feed</Text>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+        {/* Posts */}
+        {posts.map(post => (
+          <View key={post.id} style={styles.postCard}>
+            <View style={styles.postHeader}>
+              <View style={styles.smallAvatar}>
+                <Text style={styles.smallAvatarText}>{post.name[0]}</Text>
+              </View>
+              <View>
+                <Text style={styles.postName}>{post.name}</Text>
+                <Text style={styles.postRole}>{post.role}</Text>
+              </View>
+            </View>
+
+            <Text style={styles.postText}>{post.text}</Text>
+
+            <View style={styles.postFooter}>
+              <Text style={styles.likesText}>{post.likes} likes</Text>
+              <TouchableOpacity
+                style={[styles.likeBtn, post.liked && styles.likeBtnActive]}
+                onPress={() => toggleLike(post.id)}
+              >
+                <Text style={[styles.likeText, post.liked && styles.likeTextActive]}>
+                  {post.liked? '❤️ Liked' : '👍 Like'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
+
+        <View style={{ height: 30 }} />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F3F2EF',
+  },
+  header: {
+    backgroundColor: '#fff',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#0A66C2',
+  },
+  profileCard: {
+    backgroundColor: '#fff',
+    padding: 20,
+    alignItems: 'center',
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  avatar: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: '#0A66C2',
     justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  avatarText: {
+    color: '#fff',
+    fontSize: 28,
+    fontWeight: '700',
+  },
+  profileName: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#000',
+  },
+  profileRole: {
+    fontSize: 15,
+    color: '#666',
+    marginTop: 4,
+  },
+  profileStats: {
+    fontSize: 14,
+    color: '#0A66C2',
+    marginTop: 6,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#000',
+    marginHorizontal: 20,
+    marginVertical: 15,
+  },
+  postCard: {
+    backgroundColor: '#fff',
+    padding: 15,
+    marginHorizontal: 15,
+    marginBottom: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  postHeader: {
     flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
     alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    marginBottom: 10,
   },
-  heroSection: {
-    alignItems: 'center',
+  smallAvatar: {
+    width: 45,
+    height: 45,
+    borderRadius: 22.5,
+    backgroundColor: '#0A66C2',
     justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    alignItems: 'center',
+    marginRight: 12,
   },
-  title: {
-    textAlign: 'center',
+  smallAvatarText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '700',
   },
-  code: {
-    textTransform: 'uppercase',
+  postName: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#000',
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  postRole: {
+    fontSize: 13,
+    color: '#666',
+  },
+  postText: {
+    fontSize: 15,
+    color: '#000',
+    lineHeight: 22,
+    marginBottom: 12,
+  },
+  postFooter: {
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+    paddingTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  likesText: {
+    fontSize: 14,
+    color: '#666',
+  },
+  likeBtn: {
+    paddingHorizontal: 15,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: '#F3F2EF',
+  },
+  likeBtnActive: {
+    backgroundColor: '#E8F3FF',
+  },
+  likeText: {
+    fontSize: 15,
+    color: '#666',
+    fontWeight: '600',
+  },
+  likeTextActive: {
+    color: '#0A66C2',
   },
 });
