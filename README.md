@@ -57,3 +57,5 @@ Join our community of developers creating universal apps.
 
 ![Image](assets/images/code.png)
 ![Image](assets/images/all.png)
+![Image](assets/images/food.png)
+![Image](assets/images/chat.png)
